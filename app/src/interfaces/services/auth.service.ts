@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infraestructure/database/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { CustomError } from '../../domain/errors/customErros';
 
@@ -16,11 +17,13 @@ export class AuthService {
       throw CustomError.conflict('el correo del usuario ya existe');
     }
 
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
     const createdUser = await this.prisma.user.create({
       data: {
         name: dto.name,
         email: dto.email,
-        password: dto.password,
+        password: hashedPassword,
         status: dto.status ?? true,
       },
     });
