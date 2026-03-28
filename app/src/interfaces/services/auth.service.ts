@@ -4,6 +4,8 @@ import { PrismaService } from '../../infraestructure/database/prisma/prisma.serv
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { UserResponse } from '../dtos/users/response-user.interface.js';
+import { LoginUserDto } from '../dtos/users/login-user.dto';
+import { LoginResponse } from '../dtos/users/login-response.interface';
 import { CustomError } from '../../domain/errors/customErros';
 
 @Injectable()
@@ -31,6 +33,22 @@ export class AuthService {
     });
 
     return this.toUserResponse(createdUser);
+  }
+
+  async login(dto: LoginUserDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (!user) {
+      throw CustomError.unAuthorize('credenciales incorrectas');
+    }
+
+    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+
+    if (!isPasswordValid) {
+      throw CustomError.unAuthorize('credenciales incorrectas');
+    }
   }
 
   private toUserResponse(user: User): UserResponse {
