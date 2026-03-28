@@ -3,17 +3,17 @@ import { User } from '@prisma/client';
 import { PrismaService } from '../../infraestructure/database/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
-import { UserResponse } from '../dtos/users/response-user.interface.js';
 import { LoginUserDto } from '../dtos/users/login-user.dto';
-import { LoginResponse } from '../dtos/users/login-response.interface';
 import { CustomError } from '../../domain/errors/customErros';
+import { UserResponse } from '../dtos/users/response-user.interface.js';
+import { LoginResponse } from '../dtos/users/login-response.interface';
 import { JwtGenerator } from '../../config/jwt.config';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-    async createUser(dto: CreateUserDto): Promise<UserResponse> {
+  async createUser(dto: CreateUserDto): Promise<UserResponse> {
     const userEmailExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -36,7 +36,7 @@ export class AuthService {
     return this.toUserResponse(createdUser);
   }
 
-  async login(dto: LoginUserDto) {
+  async login(dto: LoginUserDto): Promise<LoginResponse> {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -62,7 +62,6 @@ export class AuthService {
       user: this.toUserResponse(user),
       token,
     };
-
   }
 
   private toUserResponse(user: User): UserResponse {
@@ -75,6 +74,4 @@ export class AuthService {
       updated_at: user.updated_at,
     };
   }
-
-
 }
