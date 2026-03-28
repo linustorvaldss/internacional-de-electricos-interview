@@ -45,13 +45,12 @@ export class AppModule implements NestModule {
       .forRoutes(
         // Auth
         { path: 'auth/register', method: RequestMethod.POST },
-        { path: 'auth/profile', method: RequestMethod.GET },
 
         // Cities
         { path: 'cities', method: RequestMethod.POST },
         { path: 'cities', method: RequestMethod.GET },
         { path: 'cities/:id', method: RequestMethod.GET },
-        { path: 'cities/by-department/:departmentId', method: RequestMethod.GET },
+        { path: 'cities/department/:departmentId', method: RequestMethod.GET },
         { path: 'cities/:id', method: RequestMethod.PATCH },
         { path: 'cities/:id', method: RequestMethod.DELETE },
 
@@ -59,7 +58,7 @@ export class AppModule implements NestModule {
         { path: 'departments', method: RequestMethod.POST },
         { path: 'departments', method: RequestMethod.GET },
         { path: 'departments/:id', method: RequestMethod.GET },
-        { path: 'departments/:id/cities', method: RequestMethod.GET },
+        // { path: 'departments/:id/cities', method: RequestMethod.GET },
         { path: 'departments/:id', method: RequestMethod.PATCH },
         { path: 'departments/:id', method: RequestMethod.DELETE },
       );

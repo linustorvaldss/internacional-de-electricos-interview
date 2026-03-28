@@ -19,9 +19,15 @@ async function bootstrap() {
     .setTitle('Internacional de Electricos API')
     .setDescription('Prueba técnica')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   
   await app.listen(process.env.PORT ?? 3000);
 }
