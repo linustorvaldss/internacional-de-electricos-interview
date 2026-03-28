@@ -7,6 +7,7 @@ import { UserResponse } from '../dtos/users/response-user.interface.js';
 import { LoginUserDto } from '../dtos/users/login-user.dto';
 import { LoginResponse } from '../dtos/users/login-response.interface';
 import { CustomError } from '../../domain/errors/customErros';
+import { JwtGenerator } from '../../config/jwt.config';
 
 @Injectable()
 export class AuthService {
@@ -49,6 +50,19 @@ export class AuthService {
     if (!isPasswordValid) {
       throw CustomError.unAuthorize('credenciales incorrectas');
     }
+
+    const token = (await JwtGenerator.generateToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      status: user.status,
+    })) as string;
+
+    return {
+      user: this.toUserResponse(user),
+      token,
+    };
+
   }
 
   private toUserResponse(user: User): UserResponse {
