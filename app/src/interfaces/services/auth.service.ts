@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from '../../infraestructure/database/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
+import { UserResponse } from '../dtos/users/response-user.interface.js';
 import { CustomError } from '../../domain/errors/customErros';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(dto: CreateUserDto) {
+    async createUser(dto: CreateUserDto): Promise<UserResponse> {
     const userEmailExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -28,7 +30,19 @@ export class AuthService {
       },
     });
 
-    return createdUser
+    return this.toUserResponse(createdUser);
   }
+
+  private toUserResponse(user: User): UserResponse {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      status: user.status,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
+  }
+
 
 }
