@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class UpdateCityDto {
@@ -5,6 +6,7 @@ export class UpdateCityDto {
   @IsOptional()
   readonly name?: string;
 
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
