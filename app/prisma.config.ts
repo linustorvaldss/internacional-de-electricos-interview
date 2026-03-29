@@ -8,7 +8,7 @@
 import 'dotenv/config'
 import { defineConfig, env } from "prisma/config";
 
-console.log("passing", process.env.DATABASE_URL);
+// console.log("passing", process.env.DATABASE_URL);
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -16,9 +16,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    // url: process.env["DATABASE_URL"],
-    // url: env.DATABASE_URL,
-    url: "postgresql://postgres:postgres@localhost:5432/dane",
+    url: env("DATABASE_URL"),
+    // url: "postgresql://postgres:postgres@localhost:5432/dane",
   },
 });
 
