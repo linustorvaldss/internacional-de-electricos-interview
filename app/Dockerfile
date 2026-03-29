@@ -1,22 +1,20 @@
-# se usa el stage para optimizar la imagen de docker, 
-# un stage para construir la app y otro stage
-# para ejecutar la aplicacion en produccion
-
-# --- BUILD ---
 FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
+ARG DATABASE_URL=postgresql://postgres:postgres@postgres:5432/dane
+ENV DATABASE_URL=${DATABASE_URL}
 COPY package*.json ./
-RUN npm install --only=development
+RUN npm install
 COPY . .
+RUN npx prisma generate --schema=prisma/schema.prisma
 RUN npm run build
 
-# --- PROD ---
 FROM node:20-alpine AS production
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+ENV NODE_ENV=production
 WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install --only=production
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/dist ./dist
-EXPOSE 3000
-CMD ["node", "dist/main"]
+COPY --from=builder /usr/src/app/prisma ./prisma
+COPY --from=builder /usr/src/app/prisma.config.ts ./prisma.config.ts
+EXPOSE 4000
+CMD ["sh", "-c", "npx prisma migrate deploy --config=prisma.config.ts --schema=prisma/schema.prisma && node dist/src/main.js"]
