@@ -4,3 +4,5 @@ export type Department = {
   created_at: string;
   updated_at: string;
 };
+
+export type DepartmentFilter = 'all' | `${number}`;
