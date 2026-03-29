@@ -28,6 +28,10 @@ Tenemos dos maneras de levantar los servicios:
 
 ![image](./docs/erd.jpeg)
 
+# Variables de entorno
+
+Como se levanta con docker, el archivo [.env.template](/infra/.env.template) contiene las variables de entorno necesarias para 
+
 # Como usar?
 
 1. Crea un usuario en  `http://localhost:2538/auth/register`. No se le coloco middleware para evitar dejar un seed de un usuario
