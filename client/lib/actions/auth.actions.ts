@@ -1,4 +1,6 @@
+import { api } from '../api';
 import { LoginResponse } from '../types/login-response.type';
+
 
 type LoginPayload = {
   email: string;
@@ -6,5 +8,5 @@ type LoginPayload = {
 };
 
 export async function loginAction(data: LoginPayload): Promise<LoginResponse> {
-  return login(data);
+  return api.login(data);
 }
