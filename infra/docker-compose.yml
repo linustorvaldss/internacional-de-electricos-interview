@@ -23,8 +23,8 @@ services:
     labels:
       - com.ie.backend=api
     build:
-      context: .
-      dockerfile: ./app/Dockerfile
+      context: ../app
+      dockerfile: Dockerfile
     container_name: ie-api
     depends_on:
       postgres:
@@ -32,30 +32,26 @@ services:
     env_file: ./.env
     environment:
       NODE_ENV: production
-      PORT: ${PORT}
-      DATABASE_URL: ${DATABASE_URL}
+      PORT: ${PORT:-4000}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/dane}
       JWT_SEED: ${JWT_SEED}
     ports:
-      - "9000:8000"
+      - "2538:4000"
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8000/api/health', r=>process.exit(r.statusCode===200?0:1))"]
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:4000/', r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\""]
       interval: 10s
       timeout: 5s
       retries: 5
-    # shm_size: '1gb'
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
     networks:
-        - ie-network
+      - ie-network
     restart: unless-stopped
 
   client:
     labels:
       - com.ie.frontend=client
     build:
-      context: .
-      dockerfile: ./client/Dockerfile
+      context: ../client
+      dockerfile: Dockerfile
     container_name: ie-client
     depends_on:
       api:
@@ -63,14 +59,12 @@ services:
     env_file: ./.env
     environment:
       NODE_ENV: production
-      # AUTH_SECRET: ${AUTH_SECRET}
-      # NEXT_PUBLIC_SECRET_KEY: ${NEXT_PUBLIC_SECRET_KEY}
-      NEST_API_URL: ${NEST_API_URL}
+      NEST_API_URL: ${NEST_API_URL:-http://api:4000}
     networks:
       - ie-network
 
     ports:
-      - "3000:3000"
+      - "2539:3000"
     restart: unless-stopped
 
 volumes:
