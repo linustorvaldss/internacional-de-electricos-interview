@@ -4,6 +4,7 @@ import { LoginUserDto } from '../dtos/users/login-user.dto';
 import { AuthService } from '../services/auth.service';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -16,6 +17,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Registrar usuario' })
   @ApiCreatedResponse({ description: 'Usuario creado exitosamente.' })
   @ApiBadRequestResponse({ description: 'Datos de entrada inválidos.' })
