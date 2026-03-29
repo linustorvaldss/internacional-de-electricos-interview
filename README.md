@@ -15,7 +15,7 @@ Monorepo con dos aplicaciones:
   - [client + docker -&gt; http://localhost:2539 -&gt; http://localhost:3000](http://localhost:2539)
 - Docs -> (Swagger) -> [http://localhost:8000](http://localhost:8000)
 
-# Requirements
+# Requerimientos
 
 Tenemos dos maneras de levantar los servicios:
 
@@ -25,6 +25,19 @@ Tenemos dos maneras de levantar los servicios:
 # ERD
 
 ![image](./docs/erd.jpeg)
+
+# Como usar?
+
+1. Crea un usuario en  `http://localhost:2538/auth/register`. No se le coloco middleware para evitar dejar un seed de un usuario
+```json
+{
+  "name": "Deissy Cortez",
+  "email": "deissy@deissy.com",
+  "password": "123456"
+}
+```
+2. Logearse en el sistema en `http://localhost:2539`
+3. Hacer uso del CRUD de departamentos y ciudades
 
 # Ejecutar con Docker Compose
 
