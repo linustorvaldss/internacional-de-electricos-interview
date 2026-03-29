@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { City } from '@prisma/client';
+import { City, Prisma } from '@prisma/client';
 import { PrismaService } from '../../infraestructure/database/prisma/prisma.service';
 import { CreateCityDto } from '../dtos/cities/create-city.dto';
 import { UpdateCityDto } from '../dtos/cities/update-city.dto';
@@ -36,14 +36,31 @@ export class CityService {
       throw CustomError.notFound('Departamento no encontrado');
     }
 
-    const createdCity = await this.prisma.city.create({
-      data: {
+    const cityWithSameName = await this.prisma.city.findFirst({
+      where: {
         name: dto.name,
         department_id: dto.department_id,
       },
     });
 
-    return this.toCityResponse(createdCity);
+    if (cityWithSameName) {
+      throw CustomError.conflict('la ciudad ya existe en este departamento');
+    }
+
+    try {
+      const createdCity = await this.prisma.city.create({
+        data: {
+          name: dto.name,
+          department_id: dto.department_id,
+        },
+      });
+
+      return this.toCityResponse(createdCity);
+    } catch (error) {
+      {
+        throw CustomError.conflict('la ciudad ya existe en este departamento');
+      }
+    }
   }
 
   async findCitiesByDepartment(departmentId: number): Promise<CityResponse[]> {
@@ -70,19 +87,6 @@ export class CityService {
       throw CustomError.notFound('Ciudad no encontrada');
     }
 
-    if (dto.name) {
-      const cityWithSameName = await this.prisma.city.findFirst({
-        where: {
-          name: dto.name,
-          department_id: dto.department_id ?? city.department_id,
-        },
-      });
-
-      if (cityWithSameName && cityWithSameName.id !== id) {
-        throw CustomError.conflict('la ciudad con ya existe en este departamento');
-      }
-    }
-
     if (dto.department_id) {
       const departmentExists = await this.prisma.department.findUnique({
         where: { id: dto.department_id },
@@ -93,15 +97,37 @@ export class CityService {
       }
     }
 
-    const updatedCity = await this.prisma.city.update({
-      where: { id },
-      data: {
-        name: dto.name ?? city.name,
-        department_id: dto.department_id ?? city.department_id,
+    const nextName = dto.name ?? city.name;
+    const nextDepartmentId = dto.department_id ?? city.department_id;
+
+    const cityWithSameName = await this.prisma.city.findFirst({
+      where: {
+        name: nextName,
+        department_id: nextDepartmentId,
+        NOT: { id },
       },
     });
 
-    return this.toCityResponse(updatedCity);
+    if (cityWithSameName) {
+      throw CustomError.conflict('la ciudad ya existe en este departamento');
+    }
+
+    try {
+      const updatedCity = await this.prisma.city.update({
+        where: { id },
+        data: {
+          name: nextName,
+          department_id: nextDepartmentId,
+        },
+      });
+
+      return this.toCityResponse(updatedCity);
+    } catch (error) {
+      {
+        throw CustomError.conflict('la ciudad ya existe en este departamento');
+      }
+
+    }
   }
 
   async delete(id: number): Promise<void> {
