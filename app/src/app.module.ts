@@ -44,7 +44,7 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         // Auth
-        { path: 'auth/register', method: RequestMethod.POST },
+        // { path: 'auth/register', method: RequestMethod.POST },
 
         // Cities
         { path: 'cities', method: RequestMethod.POST },

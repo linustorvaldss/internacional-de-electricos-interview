@@ -31,8 +31,7 @@ Tenemos dos maneras de levantar los servicios:
 Se usa compose cuando se trabajan mas de un servicio para mejor escalabilidad y control sobre los diferentes servicios (Server o Client).
 
 ```bash
-
-docker compose up --build -d
+docker compose -f infra/docker-compose.yml up --build -d
 
 ```
 
@@ -40,6 +39,6 @@ Verificar el estado de los contenedores y su correcto funcionamiento:
 
 ```bash
 docker ps
-docker logs api     # para verificar el log del servidor
-docker logs client  # para verificar el log del cliente
+docker logs ie-api     # para verificar el log del servidor
+docker logs ie-client  # para verificar el log del cliente
 ```
