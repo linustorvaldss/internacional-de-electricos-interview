@@ -10,16 +10,18 @@ Monorepo con dos aplicaciones:
 
 - /app -> Server/Backend/API REST -> (NestJs + Express + Prisma) -> [http://localhost:4000](http://localhost:4000)
 - /client -> Client/UI/Frontend -> (Next.js + React + Tailwind + NextAuth) -> [http://localhost:3000](http://localhost:3000)
+- Docs -> (Swagger) -> [http://localhost:8000](http://localhost:8000/api)
 - /infra -> Deployment -> (Docker Compose)
   - [server + docker -&gt; http://localhost:2538 -&gt; http://localhost:4000](http://localhost:2538)
   - [client + docker -&gt; http://localhost:2539 -&gt; http://localhost:3000](http://localhost:2539)
-- Docs -> (Swagger) -> [http://localhost:8000](http://localhost:8000)
+  - [server + swagger + docker -&gt; http://localhost:2538/api -&gt; http://localhost:8000/api](http://localhost:2538/api)
+
 
 # Requerimientos
 
 Tenemos dos maneras de levantar los servicios:
 
-1. Con las tecnologias individuales.
+1. Con las tecnologias individuales. necesitas descargar node con nvm/executable y postgres 
 2. Usando docker para evitar instalar las tecnologias individualmente.
 
 # ERD
@@ -29,6 +31,7 @@ Tenemos dos maneras de levantar los servicios:
 # Como usar?
 
 1. Crea un usuario en  `http://localhost:2538/auth/register`. No se le coloco middleware para evitar dejar un seed de un usuario
+  1.1 Usa swagger para crear el usuario accediendo al URI `http://localhost:2538/api`. alli vas a colocar en el body los datos de name, email y password. Ejemplo: 
 ```json
 {
   "name": "Deissy Cortez",
