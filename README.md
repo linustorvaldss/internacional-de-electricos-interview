@@ -22,9 +22,9 @@ Tenemos dos maneras de levantar los servicios:
 1. Con las tecnologias individuales.
 2. Usando docker para evitar instalar las tecnologias individualmente.
 
-# Project configuration
+# ERD
 
-# Launch and discover
+![image](./docs/erd.jpeg)
 
 # Ejecutar con Docker Compose
 
